@@ -114,8 +114,7 @@ Key tables:
 
 ## 📄 License
 
-This project is licensed under the MIT License.
-[Lihat Lisensi](#license)
+This project is licensed under the [MIT License](#LICENSE).
 
 ---
 
