@@ -14,7 +14,7 @@
         <nav class="bg-white shadow">
             <div class="container mx-auto px-4 py-3 flex items-center justify-between">
                 <div class="flex items-center space-x-4">
-                    <a href="{{ url('/') }}" class="font-semibold text-lg text-indigo-600">{{ config('app.name','EL-SMK21') }}</a>
+                    <a href="{{ url('/') }}" class="font-semibold text-lg text-indigo-600">{{ config('','DigiKelas21') }}</a>
                     @auth
                     <a href="{{ route('dashboard') }}" class="text-sm text-gray-600 hover:text-indigo-600">Dashboard</a>
                     <a href="{{ route('kelas.index') }}" class="text-sm text-gray-600 hover:text-indigo-600">Kelas</a>
