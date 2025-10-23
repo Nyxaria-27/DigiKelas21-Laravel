@@ -8,9 +8,12 @@
         <div class="flex justify-between items-center mb-4">
             <div>
                 <h2 class="text-xl font-semibold">{{ $kelas->nama_kelas }}</h2>
-                <p class="text-xs text-gray-500">Kode: {{ $kelas->kode_kelas }}</p>
+                @if(auth()->user()->role === 'Guru')
+                <div class="text-xs text-gray-500">Kode Guru: {{ $kelas->kode_guru }}</div>
+                @endif
+                <div class="text-xs text-gray-500">Kode Siswa: {{ $kelas->kode_siswa }}</div>
             </div>
-            @if(auth()->user()->role === 'Guru' && auth()->id() === $kelas->guru_id)
+            @if(auth()->user()->role === 'Guru' && auth()->id() === $kelas->creator_id)
             <div class="flex gap-2">
                 <a href="{{ route('kelas.edit', $kelas) }}" class="px-3 py-1 bg-yellow-400 text-white rounded">Edit</a>
                 <form action="{{ route('kelas.destroy', $kelas) }}" method="POST" onsubmit="return confirm('Hapus kelas?')">
@@ -25,7 +28,7 @@
         <div class="mb-6">
             <div class="flex justify-between items-center">
                 <h3 class="font-medium">Materi</h3>
-                @if(auth()->user()->role === 'Guru' && auth()->id() === $kelas->guru_id)
+                @if(auth()->user()->role === 'Guru' && auth()->id() === $kelas->creator_id)
                 <a href="{{ route('kelas.materi.create', $kelas) }}" class="text-sm text-indigo-600">+ Upload Materi</a>
                 @endif
             </div>
@@ -36,7 +39,7 @@
                         <a href="{{ route('materi.show', $m) }}" class="font-semibold">{{ $m->judul }}</a>
                         <div class="text-xs text-gray-500">{{ Str::upper($m->tipe_file ?? '—') }} • {{ $m->created_at->diffForHumans() }}</div>
                     </div>
-                    @if(auth()->user()->role === 'Guru' && auth()->id() === $kelas->guru_id)
+                    @if(auth()->user()->role === 'Guru' && auth()->id() === $kelas->creator_id)
                     <form action="{{ route('materi.destroy', $m) }}" method="POST" onsubmit="return confirm('Hapus materi?')">
                         @csrf @method('DELETE')
                         <button class="px-2 py-1 bg-red-500 text-white rounded text-sm">Hapus</button>
@@ -53,7 +56,7 @@
         <div>
             <div class="flex justify-between items-center">
                 <h3 class="font-medium">Tugas</h3>
-                @if(auth()->user()->role === 'Guru' && auth()->id() === $kelas->guru_id)
+                @if(auth()->user()->role === 'Guru' && auth()->id() === $kelas->creator_id)
                 <a href="{{ route('kelas.tugas.create', $kelas) }}" class="text-sm text-indigo-600">+ Buat Tugas</a>
                 @endif
             </div>
@@ -77,18 +80,31 @@
     {{-- Sidebar kelas --}}
     <aside class="bg-white p-4 rounded shadow">
         <h4 class="text-sm font-semibold">Detail</h4>
-        <p class="text-sm text-gray-600 mt-2">Guru: {{ $kelas->guru->nama ?? $kelas->guru->name }}</p>
+        <p class="text-sm text-gray-600 mt-2">
+            Guru pembuat: {{ $kelas->creator->nama ?? $kelas->creator->name }}
+        </p>
         <p class="text-sm text-gray-600 mt-1">Anggota: {{ $siswa->count() }} siswa</p>
 
         <div class="mt-4">
-            <h5 class="text-xs text-gray-500">Anggota</h5>
-            <ul class="mt-2 space-y-1 text-sm">
-                @forelse($siswa as $s)
-                <li>{{ $s->nama ?? $s->name }}</li>
-                @empty
-                <li class="text-xs text-gray-500">Belum ada siswa.</li>
-                @endforelse
+            <h5 class="text-xs font-bold text-gray-600">Anggota</h5>
+            <!-- Guru Pengajar -->
+            <h4 class="text-xs font-semibold text-gray-500 mt-4 ">Guru Pengajar</h4>
+            <ul class=" p-4 rounded shadow">
+                @foreach($kelas->guru as $g)
+                <li class="text-xs text-gray-600">{{ $g->nama ?? $g->name }}</li>
+                @endforeach
             </ul>
+
+            <!-- Siswa -->
+            <h4 class="text-xs font-semibold mt-4 text-gray-500">Siswa</h4>
+            <ul class=" p-4 rounded shadow">
+                @forelse($kelas->siswa as $s)
+                <li class="text-xs text-gray-600">{{ $s->nama ?? $s->name }}</li>
+                @empty
+                <li class="text-xs text-gray-600">Belum ada siswa.</li>
+            </ul>
+            @endforelse
+
         </div>
     </aside>
 </div>

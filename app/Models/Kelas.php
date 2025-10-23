@@ -15,17 +15,38 @@ class Kelas extends Model
 
 
     protected $fillable = [
-        'guru_id',
+        'creator_id',
         'nama_kelas',
-        'kode_kelas'
+        'kode_siswa',
+        'kode_guru',
     ];
-    
+
     protected $table = 'kelas';
 
-    public function guru() { return $this->belongsTo(User::class, 'guru_id'); }
-    public function materi() { return $this->hasMany(Materi::class); }
-    public function tugas() { return $this->hasMany(Tugas::class); }
-    public function siswa() { return $this->belongsToMany(User::class, 'kelas_member', 'kelas_id', 'siswa_id')->withTimestamps(); }
+    public function materi()
+    {
+        return $this->hasMany(Materi::class);
+    }
+    public function tugas()
+    {
+        return $this->hasMany(Tugas::class);
+    }
+    public function siswa()
+    {
+        return $this->belongsToMany(User::class, 'kelas_member', 'kelas_id', 'siswa_id')->withTimestamps();
+    }
 
 
+    protected $guarded = [];
+
+    // creator (user who created the class)
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'creator_id');
+    }
+
+    public function guru()
+    {
+        return $this->belongsToMany(User::class, 'kelas_guru', 'kelas_id', 'guru_id');
+    }
 }

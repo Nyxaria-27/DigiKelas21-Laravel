@@ -9,7 +9,8 @@
         <div class="flex justify-between items-start">
             <div>
                 <a href="{{ route('kelas.show',$k) }}" class="text-lg font-semibold text-indigo-600">{{ $k->nama_kelas }}</a>
-                <div class="text-xs text-gray-500">Kode: {{ $k->kode_kelas }}</div>
+                <div class="text-xs text-gray-500">Kode Guru: {{ $k->kode_guru }}</div>
+                <div class="text-xs text-gray-500">Kode Siswa: {{ $k->kode_siswa }}</div>
             </div>
             <div class="text-sm text-gray-600">{{ $k->created_at->diffForHumans() }}</div>
         </div>

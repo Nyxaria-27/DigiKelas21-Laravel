@@ -97,7 +97,7 @@ class PengumpulanController extends Controller
         $user = auth()->user();
         // siswa melihat miliknya, guru melihat jika pemilik kelas
         if ($user->role === 'Siswa' && $pengumpulan->siswa_id !== $user->id) abort(403);
-        if ($user->role === 'Guru' && $pengumpulan->tugas->kelas->guru_id !== $user->id) abort(403);
+        if ($user->role === 'Guru' && $pengumpulan->tugas->kelas->creator_id !== $user->id) abort(403);
 
         return view('pengumpulan.show', compact('pengumpulan'));
     }
@@ -105,13 +105,13 @@ class PengumpulanController extends Controller
     // ---------- Penilaian oleh guru ----------
     public function editNilai(Pengumpulan $pengumpulan)
     {
-        if (auth()->id() !== $pengumpulan->tugas->kelas->guru_id) abort(403);
+        if (auth()->id() !== $pengumpulan->tugas->kelas->creator_id) abort(403);
         return view('pengumpulan.edit_nilai', compact('pengumpulan'));
     }
 
     public function updateNilai(Request $request, Pengumpulan $pengumpulan)
     {
-        if (auth()->id() !== $pengumpulan->tugas->kelas->guru_id) abort(403);
+        if (auth()->id() !== $pengumpulan->tugas->kelas->creator_id) abort(403);
 
         $request->validate([
             'nilai' => 'required|integer|min:0|max:100',
@@ -159,7 +159,7 @@ class PengumpulanController extends Controller
         $user = auth()->user();
 
         // Autentikasi: hanya guru pemilik kelas atau admin (opsional)
-        if ($user->role === 'Guru' && $tugas->kelas->guru_id !== $user->id) {
+        if ($user->role === 'Guru' && $tugas->kelas->creator_id !== $user->id) {
             abort(403, 'Anda tidak punya akses ke pengumpulan tugas ini.');
         }
 

@@ -14,8 +14,12 @@ return new class extends Migration
         Schema::create('kelas', function (Blueprint $table) {
             $table->id();
             $table->string('nama_kelas');
-            $table->string('kode_kelas')->unique();
-            $table->foreignId('guru_id')->nullable()->constrained('users')->onDelete('cascade');
+            $table->string('kode_siswa')->nullable()->unique();
+            $table->string('kode_guru')->nullable()->unique();
+            $table->foreignId('creator_id')->nullable()->constrained('users')->onDelete('cascade');
+
+            // pastikan kode_kelas lama tetap ada or deprecated
+            // $table->string('kode_kelas')->nullable()->unique()->change();
             $table->timestamps();
         });
     }

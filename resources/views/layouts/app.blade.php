@@ -51,12 +51,19 @@
                             <li><a href="{{ route('kelas.index') }}" class="block hover:text-indigo-600">Kelas</a></li>
                             @if(auth()->user()->role === 'Guru')
                             <li><a href="{{ route('kelas.create') }}" class="block hover:text-indigo-600">Buat Kelas</a></li>
+                            <li>
+                                <form action="{{ route('kelas.join.guru') }}" method="POST" class="flex gap-2 mt-2">
+                                    @csrf
+                                    <input type="text" name="kode_guru" placeholder="Masukkan kode kelas" class="px-2 py-1 border rounded w-full text-sm" />
+                                    <button class="px-3 py-1 bg-indigo-600 text-white rounded text-sm">Gabung</button>
+                                </form>
+                            </li>
                             @endif
                             @if(auth()->user()->role === 'Siswa')
                             <li>
-                                <form action="{{ route('kelas.join') }}" method="POST" class="flex gap-2 mt-2">
+                                <form action="{{ route('kelas.join.siswa') }}" method="POST" class="flex gap-2 mt-2">
                                     @csrf
-                                    <input type="text" name="kode_kelas" placeholder="Masukkan kode kelas" class="px-2 py-1 border rounded w-full text-sm" />
+                                    <input type="text" name="kode_siswa" placeholder="Masukkan kode kelas" class="px-2 py-1 border rounded w-full text-sm" />
                                     <button class="px-3 py-1 bg-indigo-600 text-white rounded text-sm">Gabung</button>
                                 </form>
                             </li>

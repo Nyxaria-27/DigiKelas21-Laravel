@@ -16,13 +16,20 @@ class MateriController extends Controller
     public function create(Kelas $kelas)
     {
         // hanya guru pemilik kelas boleh
-        if (auth()->id() !== $kelas->guru_id) abort(403);
+        if (auth()->id() !== $kelas->creator_id) abort(403);
         return view('materi.create', compact('kelas'));
     }
 
     public function store(Request $request, Kelas $kelas)
     {
-        if (auth()->id() !== $kelas->guru_id) abort(403);
+        if (auth()->id() !== $kelas->creator_id) abort(403);
+        // assume $kelas injected
+        if (auth()->user()->isGuru()) {
+            if (! auth()->user()->kelasMengajar->contains($kelas->id)) {
+                abort(403, 'Anda bukan pengajar di kelas ini.');
+            }
+        }
+
 
         $request->validate([
             'judul' => 'required|string|max:255',
@@ -57,7 +64,7 @@ class MateriController extends Controller
         $kelas = $materi->kelas;
 
         // check access: guru pemilik atau siswa tergabung
-        if ($user->role === 'Guru' && $kelas->guru_id !== $user->id) abort(403);
+        if ($user->role === 'Guru' && $kelas->creator_id !== $user->id) abort(403);
         if ($user->role === 'Siswa' && ! $user->kelas->contains($kelas->id)) abort(403);
 
         return view('materi.show', compact('materi'));
@@ -66,7 +73,7 @@ class MateriController extends Controller
     public function destroy(Materi $materi)
     {
         $kelas = $materi->kelas;
-        if (auth()->id() !== $kelas->guru_id) abort(403);
+        if (auth()->id() !== $kelas->creator_id) abort(403);
 
         // hapus file jika ada
         if ($materi->path_file && Storage::disk('public')->exists($materi->path_file)) {

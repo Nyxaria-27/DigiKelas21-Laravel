@@ -13,13 +13,19 @@ class TugasController extends Controller
 {
     public function create(Kelas $kelas)
     {
-        if (auth()->id() !== $kelas->guru_id) abort(403);
+        if (auth()->id() !== $kelas->creator_id) abort(403);
         return view('tugas.create', compact('kelas'));
     }
 
     public function store(Request $request, Kelas $kelas)
     {
-        if (auth()->id() !== $kelas->guru_id) abort(403);
+        if (auth()->id() !== $kelas->creator_id) abort(403);
+        // assume $kelas injected
+        if (auth()->user()->isGuru()) {
+            if (! auth()->user()->kelasMengajar->contains($kelas->id)) {
+                abort(403, 'Anda bukan pengajar di kelas ini.');
+            }
+        }
 
         $request->validate([
             'judul' => 'required|string|max:255',
@@ -47,21 +53,19 @@ class TugasController extends Controller
     {
         $user = auth()->user();
         $kelas = $tugas->kelas;
-        if ($user->role === 'Guru' && $kelas->guru_id !== $user->id) abort(403);
+        if ($user->role === 'Guru' && $kelas->creator_id !== $user->id) abort(403);
         if ($user->role === 'Siswa' && ! $user->kelas->contains($kelas->id)) abort(403);
 
         // jika guru, tampilkan juga pengumpulan siswa
         $pengumpulan = null;
         $pengumpulanSaya = null;
-        if($user->role === 'Siswa') {
+        if ($user->role === 'Siswa') {
             $pengumpulanSaya = \App\Models\Pengumpulan::where('tugas_id', $tugas->id)
                 ->where('siswa_id', auth()->id())
                 ->first();
-        }
-    elseif ($user->role === 'Guru') {
+        } elseif ($user->role === 'Guru') {
 
-                $pengumpulan = $tugas->pengumpulan()->with('siswa')->get();
-            
+            $pengumpulan = $tugas->pengumpulan()->with('siswa')->get();
         }
         return view('tugas.show', compact('tugas', 'pengumpulan', 'pengumpulanSaya'));
     }
@@ -69,14 +73,14 @@ class TugasController extends Controller
     public function edit(Tugas $tugas)
     {
         $kelas = $tugas->kelas;
-        if (auth()->id() !== $kelas->guru_id) abort(403);
+        if (auth()->id() !== $kelas->creator_id) abort(403);
         return view('tugas.edit', compact('tugas'));
     }
 
     public function update(Request $request, Tugas $tugas)
     {
         $kelas = $tugas->kelas;
-        if (auth()->id() !== $kelas->guru_id) abort(403);
+        if (auth()->id() !== $kelas->creator_id) abort(403);
 
         $request->validate([
             'judul' => 'required|string|max:255',

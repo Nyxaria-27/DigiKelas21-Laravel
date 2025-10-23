@@ -12,8 +12,7 @@
             <a href="{{ route('kelas.show',$k) }}" class="block p-2 border rounded hover:bg-indigo-50">
                 <div class="flex justify-between items-center">
                     <div>
-                        <div class="font-semibold">{{ $k->nama_kelas }}</div>
-                        <div class="text-xs text-gray-500">Kode: {{ $k->kode_kelas }}</div>
+                        <div class="font-semibold">{{ $k->nama_kelas }}</div>   
                     </div>
                     <div class="text-sm text-gray-600">{{ $k->siswa_count ?? 0 }} siswa</div>
                 </div>

@@ -26,7 +26,7 @@ Route::middleware(['auth'])->group(function () {
     // ---------- KELAS ----------
     Route::get('/kelas', [KelasController::class, 'index'])->name('kelas.index');
 
-    Route::middleware(['auth', 'role:Admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::middleware([CheckRole::class . ':Admin'])->prefix('admin')->name('admin.')->group(function () {
         Route::get('/users', 'Admin\UserController@index')->name('users.index');
         Route::get('/users/{user}/edit', 'Admin\UserController@edit')->name('users.edit');
         Route::put('/users/{user}', 'Admin\UserController@update')->name('users.update');
@@ -45,6 +45,9 @@ Route::middleware(['auth'])->group(function () {
     // Guru & Admin
     // ==============================
     Route::middleware([CheckRole::class . ':Guru'])->group(function () {
+        //Join Kelas
+        Route::post('/kelas/join-guru', [KelasController::class,'joinGuru'])->name('kelas.join.guru');
+
         // Kelas
         Route::get('/kelas/create', [KelasController::class, 'create'])->name('kelas.create');
         Route::post('/kelas', [KelasController::class, 'store'])->name('kelas.store');
@@ -80,7 +83,7 @@ Route::middleware(['auth'])->group(function () {
     // ==============================
     Route::middleware([CheckRole::class . ':Siswa'])->group(function () {
         // Join kelas
-        Route::post('/kelas/join', [KelasController::class, 'join'])->name('kelas.join');
+        Route::post('/kelas/join-siswa', [KelasController::class,'joinSiswa'])->name('kelas.join.siswa');
 
         Route::get('/materi/{materi}', [MateriController::class, 'show'])->name('materi.show'); // akses tambahan di controller
         Route::get('/tugas/show/{tugas}', [TugasController::class, 'show'])->name('tugas.show');

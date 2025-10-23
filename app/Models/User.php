@@ -63,4 +63,22 @@ class User extends Authenticatable
     {
         return $this->hasMany(Pengumpulan::class, 'siswa_id');
     }
+
+    // classes user as student
+public function kelasDikuti()
+{
+    return $this->belongsToMany(Kelas::class, 'kelas_member', 'siswa_id', 'kelas_id')->withTimestamps();
+}
+
+// classes user is guru of
+public function kelasMengajar()
+{
+    return $this->belongsToMany(Kelas::class, 'kelas_guru', 'guru_id', 'kelas_id')->withTimestamps();
+}
+
+// Optional convenience
+public function isGuru() { return $this->role === 'Guru'; }
+public function isSiswa() { return $this->role === 'Siswa'; }
+public function isAdmin() { return $this->role === 'Admin'; }
+
 }
